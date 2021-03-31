@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import './Container.css'
 import Treasure from '../Treasure'
+import axios from 'axios';
 
 export default class Container extends Component {
   constructor() {
@@ -18,15 +19,59 @@ export default class Container extends Component {
   }
 
   getDragonTreasure() {
-    // axios GET to /api/treasure/dragon here
+  //In the getDragonTreasure() method, make an axios GET request to /api/treasure/dragon.
+    axios
+      .get('/api/treasure/dragon')
+  //Chain a .then and set the data from the response to the treasures object on state on a property called dragon.
+  //Make sure to use the spread operator to keep the treasures object immutable.
+      .then(treasure => {
+        this.setState({
+          treasures: {
+            ...this.state.treasures,
+            dragon: treasure.data,
+          },
+        });
+      })
+  //Chain a .catch onto the .then with a console.log of the error
+      .catch(error => console.log(error));
   }
 
+
   getAllTreasure() {
-    // axios GET to /api/treasure/all here
+//Find the getAllTreasure method and use axios to make a GET request to /api/treasure/all.
+    axios.get('/api/treasure/all')
+//Chain a .then() on the end of .get() method and call this.setState() passing in an object with a treasures property.
+    .then( treasure => {
+//Since all treasures including dragon, user, and all will be on the same object, we need to use the spread operator to add all current properties to our new object and then define a new all property that will be added to the end of the object.
+      this.setState({
+        treasures: {
+          ...this.state.treasures,
+          all: treasure.data
+        }
+      })
+//Chain a .catch() on to the end of the .then() and use an pass in an arrow function with error as a parameter. You should then alert the error.response.request.response.
+//referencing .response.request.response on the error object allows us to drill down to the string response that we sent on the server.
+    }).catch( error => alert(error.response.request.response))
   }
 
   getMyTreasure() {
-    // axios GET to /api/treasure/user here
+    //In the getMyTreasure() method, use axios to make a GET request to /api/treasure/user.
+    axios
+      .get('/api/treasure/user')
+    //Chain a .then on to the end of the .get method and provide an arrow function with treasure as a parameter.
+      .then(treasure => {
+    //Call this.setState and pass in an object with a treasures property with the value of an object.
+        this.setState({
+    //Inside that object, make sure to spread the current properties and values of this.state.treasures before setting the user property to treasure.data.
+          treasures: {
+            ...this.state.treasures,
+            user: treasure.data,
+          },
+        });
+      })
+    //Chain a .catch on to the .then that takes an arrow function with error as a parameter and using an alert(), alerts error.response.request.response. This will alert the message that we respond with on the server.
+      .catch(error => alert(error.response.request.response));
+    //Test App
   }
 
   addMyTreasure(newMyTreasure) {
